@@ -142,6 +142,68 @@ All role-management routes require authentication and the appropriate `roles` pe
 
 ---
 
+## Suppliers
+Base path: `/api/suppliers`
+
+All supplier routes require authentication and the appropriate `suppliers` permissions.
+
+### GET /api/suppliers
+- Description: List suppliers with pagination and search/filter support
+- Auth: `authorize('suppliers', 'read')`
+- Query params: `page`, `limit`, `sort`, `search`, `name`, `contact`
+- Response 200:
+  - `meta`: { page, limit, total }
+  - `data`: [ supplier ]
+
+### GET /api/suppliers/:id
+- Description: Get supplier by id
+- Auth: `authorize('suppliers', 'read')`
+- Response 200: supplier object
+- Errors: 404 if not found
+
+### POST /api/suppliers
+- Description: Create supplier
+- Auth: `authorize('suppliers', 'create')`
+- Body (JSON):
+  - `name` (string, required)
+  - `contact` (string, required)
+  - `email` (string, required)
+  - `address` (string, required)
+- Response 201: created supplier object
+- Errors: 409 if supplier already exists, 422 for validation
+
+### PUT /api/suppliers/:id
+- Description: Update supplier details
+- Auth: `authorize('suppliers', 'update')`
+- Body (JSON):
+  - `name` (string, optional)
+  - `contact` (string, optional)
+  - `email` (string, optional)
+  - `address` (string, optional)
+- Response 200: updated supplier object
+- Errors: 404 if not found, 422 for validation
+
+### DELETE /api/suppliers/:id
+- Description: Delete supplier
+- Auth: `authorize('suppliers', 'delete')`
+- Response 204: no content
+- Errors: 404 if not found
+
+Example supplier object:
+```json
+{
+  "_id": "660d2f1f4f1a2b3c4d5e6f70",
+  "name": "Global Traders",
+  "contact": "+91 9876543210",
+  "email": "global@example.com",
+  "address": "123 Market Road, Pune",
+  "createdAt": "2026-04-02T10:00:00.000Z",
+  "updatedAt": "2026-04-02T10:00:00.000Z"
+}
+```
+
+---
+
 ## Orders (example module)
 Base path: `/api/orders`
 
