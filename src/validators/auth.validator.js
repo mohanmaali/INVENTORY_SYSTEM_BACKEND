@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { PATTERNS, ROLES, PAGINATION } from '../config/constants.js';
+import { PATTERNS, PAGINATION } from '../config/constants.js';
 
 /**
  * Validation schemas for authentication routes
@@ -28,9 +28,7 @@ const registerSchema = Joi.object({
       'string.pattern.base': 'Password must contain at least 8 characters, one uppercase, one lowercase, and one number',
       'any.required': 'Password is required'
     }),
-  role: Joi.string()
-    .valid(...Object.values(ROLES))
-    .default(ROLES.USER)
+  // Role is managed via role-management endpoints; new users receive default role via seeder or admin
 });
 
 const loginSchema = Joi.object({

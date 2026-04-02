@@ -10,7 +10,7 @@ import { MESSAGES, HTTP_STATUS } from '../config/constants.js';
  */
 const register = asyncHandler(async (req, res, next) => {
   const { user, token } = await authService.register(req.body);
-  apiResponse.createdResponse(res, HTTP_STATUS.CREATED, MESSAGES.REGISTER_SUCCESS, {
+  apiResponse.createdResponse(res, MESSAGES.REGISTER_SUCCESS, {
     user: user.getPublicProfile(),
     token
   });

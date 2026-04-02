@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { PATTERNS, ROLES, PAGINATION } from '../config/constants.js';
+import { PATTERNS, PAGINATION } from '../config/constants.js';
 
 /**
  * Validation schemas for user routes
@@ -17,11 +17,7 @@ const updateUserSchema = Joi.object({
     .messages({
       'string.pattern.base': 'Please provide a valid email'
     }),
-  role: Joi.string()
-    .valid(...Object.values(ROLES))
-    .messages({
-      'any.only': 'Invalid role'
-    }),
+  // Role should be managed via roleId and role-management endpoints; not set directly here
   isActive: Joi.boolean()
 });
 
