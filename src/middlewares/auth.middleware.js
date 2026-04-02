@@ -16,7 +16,7 @@ const authenticate = async (req, res, next) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     }
-
+  
     if (!token) {
       return next(new AppError(
         'Not authorized to access this route',
@@ -29,6 +29,7 @@ const authenticate = async (req, res, next) => {
     const decoded = jwt.verifyToken(token);
 
     // Get user from token
+   
     const user = await User.findById(decoded.id);
 
     if (!user) {
@@ -40,6 +41,7 @@ const authenticate = async (req, res, next) => {
     }
 
     // Attach user to request
+   
     req.user = user;
     next();
   } catch (error) {
@@ -51,30 +53,10 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-/**
- * Authorization middleware - check user roles
- * @param {string[]} ...roles - Allowed roles
- * @returns {Function} - Middleware function
- */
-const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return next(new AppError(
-        `Role ${req.user.role} is not authorized to access this route`,
-        HTTP_STATUS.FORBIDDEN,
-        ERROR_TYPES.AUTHORIZATION_ERROR
-      ));
-    }
-    next();
-  };
-};
-
 export default {
-  authenticate,
-  authorize
+  authenticate
 };
 
 export {
-  authenticate,
-  authorize
+  authenticate
 };

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { HTTP_STATUS, ERROR_TYPES, PATTERNS, ROLES } from '../config/constants.js';
+import { HTTP_STATUS, ERROR_TYPES, PATTERNS } from '../config/constants.js';
 import { hashPassword } from '../utils/hashPassword.js';
 
 const userSchema = new mongoose.Schema({
@@ -23,10 +23,11 @@ const userSchema = new mongoose.Schema({
     minlength: [5, 'Password must be at least 5 characters'],
     select: false
   },
-  role: {
-    type: String,
-    enum: Object.values(ROLES),
-    default: ROLES.USER
+  // Reference to a Role document for DB-driven permissions (single source of truth)
+  roleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+    default: null
   },
   avatar: {
     type: String,

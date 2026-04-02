@@ -4,10 +4,14 @@ const router = express.Router();
 // Import route files
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
+import ordersRoutes from './orders.routes.js';
+import rolesRoutes from './roles.routes.js';
 
 // Define routes
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
+router.use('/orders', ordersRoutes);
+router.use('/roles', rolesRoutes);
 
 // Health check endpoint
 router.get('/health', (req, res) => {

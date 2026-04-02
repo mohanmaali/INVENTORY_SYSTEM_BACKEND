@@ -4,6 +4,17 @@ import asyncHandler from '../utils/asyncHandler.js';
 import { MESSAGES, HTTP_STATUS } from '../config/constants.js';
 
 /**
+ * @route PATCH /api/users/:id/role
+ * @desc Assign or change a user's role by role ID
+ * @access Private (Admin only)
+ */
+const assignRole = asyncHandler(async (req, res, next) => {
+  const { roleId } = req.body;
+  const user = await userService.assignRole(req.params.id, roleId);
+  apiResponse.successResponse(res, HTTP_STATUS.OK, MESSAGES.SUCCESS, user);
+});
+
+/**
  * @route GET /api/users
  * @desc Get all users with pagination
  * @access Private (Admin only)
@@ -48,4 +59,5 @@ export default {
   getUserById,
   updateUser,
   deleteUser
+  ,assignRole
 };

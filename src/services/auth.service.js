@@ -21,7 +21,18 @@ const register = async (userData) => {
     );
   }
 
-  // Create user
+  // Attempt to assign a default role (Staff) by roleId if available
+  try {
+    const Role = await import('../models/Role.model.js');
+    const staffRole = await Role.default.findOne({ name: /^Staff$/i }).select('_id').lean();
+    if (staffRole) {
+      userData.roleId = staffRole._id;
+    }
+  } catch (e) {
+    // If roles model or lookup fails, continue without roleId — won't block registration
+  }
+
+  // Create user (roleId included when available)
   const user = await User.create(userData);
 
   // Generate JWT token
@@ -94,7 +105,7 @@ const logout = async () => {
  * @returns {Object} - User profile
  */
 const getProfile = async (userId) => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).populate('roleId');
   if (!user) {
     throw new AppError(
       MESSAGES.USER_NOT_FOUND,
@@ -102,7 +113,9 @@ const getProfile = async (userId) => {
       ERROR_TYPES.NOT_FOUND_ERROR
     );
   }
-  return user.getPublicProfile();
+  const profile = user.getPublicProfile();
+  profile.role = profile.roleId;
+  return profile;
 };
 
 /**

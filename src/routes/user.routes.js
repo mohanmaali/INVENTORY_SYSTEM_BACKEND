@@ -9,15 +9,19 @@ import { updateUserSchema, userIdParamSchema, paginationQuerySchema } from '../v
 
 // Import middlewares
 import validate from '../middlewares/validate.js';
-import { authenticate, authorize } from '../middlewares/auth.middleware.js';
+import { authenticate } from '../middlewares/auth.middleware.js';
+import authorize from '../middlewares/permission.middleware.js';
 
 // All user routes require authentication
 router.use(authenticate);
 
 // Admin only routes
-router.get('/', authorize('admin'), validate(paginationQuerySchema, 'query'), userController.getAllUsers);
-router.get('/:id', authorize('admin'), validate(userIdParamSchema, 'params'), userController.getUserById);
-router.put('/:id', authorize('admin'), validate(userIdParamSchema, 'params'), validate(updateUserSchema), userController.updateUser);
-router.delete('/:id', authorize('admin'), validate(userIdParamSchema, 'params'), userController.deleteUser);
+//  authorize('users', 'read')
+router.get('/', authorize('users', 'read'), validate(paginationQuerySchema, 'query'), userController.getAllUsers);
+router.get('/:id', authorize('users', 'read'), validate(userIdParamSchema, 'params'), userController.getUserById);
+router.put('/:id', authorize('users', 'update'), validate(userIdParamSchema, 'params'), validate(updateUserSchema), userController.updateUser);
+router.delete('/:id', authorize('users', 'delete'), validate(userIdParamSchema, 'params'), userController.deleteUser);
+// Assign/change role for a user (expecting { roleId })
+router.patch('/:id/role', authorize('users', 'update'), validate(userIdParamSchema, 'params'), userController.assignRole);
 
 export default router;
