@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
 // Rate limiting
-app.use(rateLimiter.generalLimiter);
+// app.use(rateLimiter.generalLimiter);
 
 // Request logging
 if (config.NODE_ENV !== 'test') {

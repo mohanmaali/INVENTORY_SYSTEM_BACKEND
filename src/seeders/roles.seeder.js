@@ -2,7 +2,7 @@ import Role from '../models/Role.model.js';
 
 // Default modules in the system; extendable without code change by updating DB
 // Include 'roles' so role-management endpoints can be permissioned as well
-const MODULES = ['users', 'orders', 'reports', 'inventory', 'roles', 'suppliers'];
+const MODULES = ['users', 'orders', 'reports', 'inventory', 'roles', 'suppliers', 'products', 'customers'];
 
 const buildPermissions = (modules, actions) => modules.map(m => ({ module: m, actions }));
 

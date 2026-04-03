@@ -28,36 +28,40 @@ const errorHandler = (err, req, res, next) => {
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {
     const message = 'Resource not found';
-    error = new AppError(message, HTTP_STATUS.NOT_FOUND, ERROR_TYPES.NOT_FOUND_ERROR);
+    error = new AppError(message, HTTP_STATUS.NOT_FOUND, ERROR_TYPES.NOT_FOUND_ERROR, 'NOT_FOUND');
   }
 
   // Mongoose duplicate key
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue)[0];
     const message = `${field} already exists`;
-    error = new AppError(message, HTTP_STATUS.CONFLICT, ERROR_TYPES.CONFLICT_ERROR);
+    error = new AppError(message, HTTP_STATUS.CONFLICT, ERROR_TYPES.CONFLICT_ERROR, 'CONFLICT');
   }
 
   // Mongoose validation error
   if (err.name === 'ValidationError') {
     const messages = Object.values(err.errors).map(val => val.message);
     const message = messages.join(', ');
-    error = new AppError(message, HTTP_STATUS.UNPROCESSABLE_ENTITY, ERROR_TYPES.VALIDATION_ERROR);
+    error = new AppError(message, HTTP_STATUS.BAD_REQUEST, ERROR_TYPES.VALIDATION_ERROR, 'VALIDATION_ERROR');
   }
 
   // JWT errors
   if (err.name === 'JsonWebTokenError') {
     const message = 'Invalid token, please login again';
-    error = new AppError(message, HTTP_STATUS.UNAUTHORIZED, ERROR_TYPES.AUTHENTICATION_ERROR);
+    error = new AppError(message, HTTP_STATUS.UNAUTHORIZED, ERROR_TYPES.AUTHENTICATION_ERROR, 'INVALID_TOKEN');
   }
 
   if (err.name === 'TokenExpiredError') {
     const message = 'Token expired, please login again';
-    error = new AppError(message, HTTP_STATUS.UNAUTHORIZED, ERROR_TYPES.AUTHENTICATION_ERROR);
+    error = new AppError(message, HTTP_STATUS.UNAUTHORIZED, ERROR_TYPES.AUTHENTICATION_ERROR, 'TOKEN_EXPIRED');
   }
 
   res.status(error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     success: false,
+    ...(error.code && { code: error.code }),
+    ...(error.product && { product: error.product }),
+    ...(typeof error.limit !== 'undefined' && { limit: error.limit }),
+    ...(typeof error.outstanding !== 'undefined' && { outstanding: error.outstanding }),
     message: error.message || MESSAGES.SERVER_ERROR,
     ...(config.NODE_ENV !== 'production' && { stack: err.stack })
   });
