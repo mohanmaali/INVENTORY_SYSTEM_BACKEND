@@ -1,17 +1,30 @@
 import express from 'express';
-const router = express.Router();
 
 import ordersController from '../controllers/orders.controller.js';
 import { authenticate } from '../middlewares/auth.middleware.js';
 import authorize from '../middlewares/permission.middleware.js';
 import validate from '../middlewares/validate.js';
+import {
+  createOrderSchema,
+  orderIdParamSchema,
+  orderQuerySchema,
+  orderSummaryQuerySchema,
+  updateOrderSchema,
+  updateOrderStatusSchema
+} from '../validators/orders.validator.js';
 
-// Grouped routes for the `orders` module. Each route is protected using
-// `authenticate` (ensures JWT/user present) and `authorize(module, action)`.
-router.get('/', authenticate, authorize('orders', 'read'), ordersController.getAllOrders);
-router.get('/:id', authenticate, authorize('orders', 'read'), ordersController.getOrderById);
-router.post('/', authenticate, authorize('orders', 'create'), validate({}), ordersController.createOrder);
-router.put('/:id', authenticate, authorize('orders', 'update'), validate({}), ordersController.updateOrder);
-router.delete('/:id', authenticate, authorize('orders', 'delete'), ordersController.deleteOrder);
+const router = express.Router();
+
+router.use(authenticate);
+
+router.get('/summary', authorize('orders', 'read'), validate(orderSummaryQuerySchema, 'query'), ordersController.getOrdersSummary);
+router.get('/', authorize('orders', 'read'), validate(orderQuerySchema, 'query'), ordersController.getAllOrders);
+router.get('/:id/timeline', authorize('orders', 'read'), validate(orderIdParamSchema, 'params'), ordersController.getOrderTimeline);
+router.get('/:id', authorize('orders', 'read'), validate(orderIdParamSchema, 'params'), ordersController.getOrderById);
+router.post('/', authorize('orders', 'create'), validate(createOrderSchema), ordersController.createOrder);
+router.patch('/:id', authorize('orders', 'update'), validate(orderIdParamSchema, 'params'), validate(updateOrderSchema), ordersController.updateOrder);
+router.patch('/:id/status', authorize('orders', 'update'), validate(orderIdParamSchema, 'params'), validate(updateOrderStatusSchema), ordersController.updateOrderStatus);
+router.delete('/:id/permanent', authorize('orders', 'delete'), validate(orderIdParamSchema, 'params'), ordersController.permanentlyDeleteOrder);
+router.delete('/:id', authorize('orders', 'delete'), validate(orderIdParamSchema, 'params'), ordersController.deleteOrder);
 
 export default router;

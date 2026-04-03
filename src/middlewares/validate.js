@@ -19,8 +19,9 @@ const validate = (schema, property = 'body') => {
       const errorMessage = error.details.map(detail => detail.message).join(', ');
       return next(new AppError(
         errorMessage,
-        HTTP_STATUS.UNPROCESSABLE_ENTITY,
-        ERROR_TYPES.VALIDATION_ERROR
+        HTTP_STATUS.BAD_REQUEST,
+        ERROR_TYPES.VALIDATION_ERROR,
+        'VALIDATION_ERROR'
       ));
     }
 
