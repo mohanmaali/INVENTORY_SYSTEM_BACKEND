@@ -3,13 +3,14 @@ import Role from '../models/Role.model.js';
 // Default modules in the system; extendable without code change by updating DB
 // Include 'roles' so role-management endpoints can be permissioned as well
 const MODULES = ['users', 'orders', 'reports', 'inventory', 'roles', 'suppliers', 'products', 'customers'];
+const STAFF_MODULES = MODULES.filter(moduleName => moduleName !== 'reports');
 
 const buildPermissions = (modules, actions) => modules.map(m => ({ module: m, actions }));
 
 export const seedDefaultRoles = async () => {
   const adminPerms = buildPermissions(MODULES, ['create', 'read', 'update', 'delete']);
   const managerPerms = buildPermissions(MODULES, ['create', 'read', 'update']);
-  const staffPerms = buildPermissions(MODULES, ['read']);
+  const staffPerms = buildPermissions(STAFF_MODULES, ['read']);
 
   const roles = [
     { name: 'Admin', description: 'Full access', permissions: adminPerms },

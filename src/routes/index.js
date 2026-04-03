@@ -9,6 +9,7 @@ import rolesRoutes from './roles.routes.js';
 import supplierRoutes from './supplier.routes.js';
 import productRoutes from './product.routes.js';
 import customerRoutes from './customer.routes.js';
+import reportsRoutes from './reports.routes.js';
 
 // Define routes
 router.use('/auth', authRoutes);
@@ -18,6 +19,7 @@ router.use('/roles', rolesRoutes);
 router.use('/suppliers', supplierRoutes);
 router.use('/products', productRoutes);
 router.use('/customers', customerRoutes);
+router.use('/reports', reportsRoutes);
 
 // Health check endpoint
 router.get('/health', (req, res) => {
